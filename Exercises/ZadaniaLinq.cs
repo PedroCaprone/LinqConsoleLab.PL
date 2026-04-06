@@ -140,7 +140,7 @@ public sealed class ZadaniaLinq
 
     /// <summary>
     /// Zadanie:
-    /// Zwróć trzy najnowsze zapisy na przedmioty.
+    /// Zwróć trzy najnowsze zapisy na przedmioty. (sortowanie po dacie)
     /// W wyniku pokaż datę zapisu, identyfikator studenta i identyfikator przedmiotu.
     ///
     /// SQL:
@@ -150,7 +150,12 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie09_TrzyNajnowszeZapisy()
     {
-        throw Niezaimplementowano(nameof(Zadanie09_TrzyNajnowszeZapisy));
+        return DaneUczelni.Zapisy
+            .OrderByDescending(z => z.DataZapisu)
+            .Take(3)
+            .Select(z => $"{z.DataZapisu:yy-MM-dd} | " +
+                                 $"StudentId: {z.StudentId} " +
+                                 $"| PrzedmiotId: {z.PrzedmiotId}");
     }
 
     /// <summary>
@@ -166,7 +171,11 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie10_DrugaStronaPrzedmiotow()
     {
-        throw Niezaimplementowano(nameof(Zadanie10_DrugaStronaPrzedmiotow));
+        return DaneUczelni.Przedmioty
+            .OrderBy(p => p.Nazwa)
+            .Skip(2)
+            .Take(2)
+            .Select(p => $"{p.Nazwa} | {p.Kategoria}");
     }
 
     /// <summary>
