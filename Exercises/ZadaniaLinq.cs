@@ -190,7 +190,12 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie11_PolaczStudentowIZapisy()
     {
-        throw Niezaimplementowano(nameof(Zadanie11_PolaczStudentowIZapisy));
+        return DaneUczelni.Studenci
+            .Join(DaneUczelni.Zapisy,
+                student => student.Id,
+                zapis => zapis.StudentId,
+                ((student, zapis) => $"{student.Imie} {student.Nazwisko} |" +
+                                     $"PrzedmiotId: {zapis.PrzedmiotId}"));
     }
 
     /// <summary>
@@ -206,7 +211,19 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie12_ParyStudentPrzedmiot()
     {
-        throw Niezaimplementowano(nameof(Zadanie12_ParyStudentPrzedmiot));
+        return DaneUczelni.Studenci
+            .SelectMany(student =>
+                    DaneUczelni.Zapisy
+                        .Where(z => z.StudentId == student.Id),
+                (student, zapis) => new { student, zapis }
+            )
+            .Join(
+                DaneUczelni.Przedmioty,
+                temp => temp.zapis.PrzedmiotId,
+                przedmiot => przedmiot.Id,
+                (temp, przedmiot) =>
+                    $"{temp.student.Imie} {temp.student.Nazwisko} | {przedmiot.Nazwa}"
+            );
     }
 
     /// <summary>
