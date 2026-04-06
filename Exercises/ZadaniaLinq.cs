@@ -346,7 +346,17 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Wyzwanie01_StudenciZWiecejNizJednymAktywnymPrzedmiotem()
     {
-        throw Niezaimplementowano(nameof(Wyzwanie01_StudenciZWiecejNizJednymAktywnymPrzedmiotem));
+        return DaneUczelni.Zapisy
+            .Where(z => z.CzyAktywny)
+            .GroupBy(z => z.StudentId)
+            .Where(grupa => grupa.Count() > 1)
+            .Join(
+                DaneUczelni.Studenci,
+                grupa => grupa.Key,
+                student => student.Id,
+                (grupa, student) =>
+                    $"{student.Imie} {student.Nazwisko} | Aktywne przedmioty: {grupa.Count()}"
+            );
     }
 
     /// <summary>
@@ -362,8 +372,17 @@ public sealed class ZadaniaLinq
     /// HAVING SUM(CASE WHEN z.OcenaKoncowa IS NOT NULL THEN 1 ELSE 0 END) = 0;
     /// </summary>
     public IEnumerable<string> Wyzwanie02_PrzedmiotyStartujaceWKwietniuBezOcenKoncowych()
-    {
-        throw Niezaimplementowano(nameof(Wyzwanie02_PrzedmiotyStartujaceWKwietniuBezOcenKoncowych));
+    {//czyli szukam przedmiot-zapis, gdzie dla przedmiotu nie ma ani jednej ocenki koncowej (10min na interpretacje polecenia .xd)
+        return DaneUczelni.Przedmioty
+            .Where(p => p.DataStartu.Month == 4 && p.DataStartu.Year == 2026)
+            .GroupJoin(
+                DaneUczelni.Zapisy,
+                p => p.Id,
+                z => z.PrzedmiotId,
+                (p, zapisy) => new {p, zapisy})
+            .Where(x => x.zapisy.All(z => z.OcenaKoncowa == null))
+            .Select(x => x.p.Nazwa);
+        //x=p,zapis
     }
 
     /// <summary>
@@ -380,8 +399,28 @@ public sealed class ZadaniaLinq
     /// GROUP BY pr.Imie, pr.Nazwisko;
     /// </summary>
     public IEnumerable<string> Wyzwanie03_ProwadzacyISredniaOcenNaIchPrzedmiotach()
-    {
-        throw Niezaimplementowano(nameof(Wyzwanie03_ProwadzacyISredniaOcenNaIchPrzedmiotach));
+    {//wszyskie oceny z wszystki przedmiotów jednego prowadzącego do jednego wora i średnia
+        //1morawska (4,5+3,5+5+4,5)/4 = 4,375 sowa 
+        return DaneUczelni.Prowadzacy
+            .Join(
+                DaneUczelni.Przedmioty,
+                prowadzacy => prowadzacy.Id,
+                przedmiot => przedmiot.ProwadzacyId,
+                (prowadzacy, przedmiot) => new { prowadzacy, przedmiot }
+            )
+            .Join(
+                DaneUczelni.Zapisy.Where(z => z.OcenaKoncowa.HasValue),
+                x => x.przedmiot.Id,
+                zapis => zapis.PrzedmiotId,
+                (x, zapis) => new
+                {
+                    x.prowadzacy.Imie,
+                    x.prowadzacy.Nazwisko,
+                    Ocena = zapis.OcenaKoncowa!.Value
+                }
+            )
+            .GroupBy(x => new { x.Imie, x.Nazwisko })
+            .Select(grupa => $"{grupa.Key.Imie} {grupa.Key.Nazwisko} | Średnia: {grupa.Average(x => x.Ocena):0.00}");
     }
 
     /// <summary>
@@ -398,8 +437,18 @@ public sealed class ZadaniaLinq
     /// ORDER BY COUNT(*) DESC;
     /// </summary>
     public IEnumerable<string> Wyzwanie04_MiastaILiczbaAktywnychZapisow()
-    {
-        throw Niezaimplementowano(nameof(Wyzwanie04_MiastaILiczbaAktywnychZapisow));
+    {//miasto-l zapisow (NIE STUDENTOW) z miasta w zapisach - sort malejąco po tej liczbie
+        return DaneUczelni.Studenci
+            .Join(
+                DaneUczelni.Zapisy,
+                s => s.Id,
+                z => z.StudentId,
+                (s, z) => new { s.Miasto, z.CzyAktywny }
+            )
+            .Where(x => x.CzyAktywny)
+            .GroupBy(x => x.Miasto)
+            .OrderByDescending(grupa => grupa.Count())
+            .Select(grupa => $"{grupa.Key} | Aktywne zapisy: {grupa.Count()}");
     }
 
     private static NotImplementedException Niezaimplementowano(string nazwaMetody)
