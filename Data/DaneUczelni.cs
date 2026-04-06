@@ -3,7 +3,7 @@ using LinqConsoleLab.PL.Models;
 namespace LinqConsoleLab.PL.Data;
 
 public static class DaneUczelni
-{
+{//W DANYCH NIE MA NULIIII
     private static bool _zainicjalizowano;
 
     public static List<Student> Studenci { get; } = [];

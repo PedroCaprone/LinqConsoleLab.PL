@@ -4,6 +4,7 @@ namespace LinqConsoleLab.PL.Exercises;
 
 public sealed class ZadaniaLinq
 {
+    //W DANYCH NIE MA NULI
     /// <summary>
     /// Zadanie:
     /// Wyszukaj wszystkich studentów mieszkających w Warsaw.
@@ -15,8 +16,10 @@ public sealed class ZadaniaLinq
     /// WHERE Miasto = 'Warsaw';
     /// </summary>
     public IEnumerable<string> Zadanie01_StudenciZWarszawy()
-    {
-        throw Niezaimplementowano(nameof(Zadanie01_StudenciZWarszawy));
+    { //dziala
+        return DaneUczelni.Studenci
+            .Where(s => s.Miasto == "Warsaw")
+            .Select(s => $"{s.NumerIndeksu} | {s.Imie} {s.Nazwisko} | {s.Miasto}");
     }
 
     /// <summary>
@@ -30,7 +33,7 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie02_AdresyEmailStudentow()
     {
-        throw Niezaimplementowano(nameof(Zadanie02_AdresyEmailStudentow));
+        return DaneUczelni.Studenci.Select(s => s.Email);
     }
 
     /// <summary>
@@ -45,7 +48,8 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie03_StudenciPosortowani()
     {
-        throw Niezaimplementowano(nameof(Zadanie03_StudenciPosortowani));
+        return DaneUczelni.Studenci.OrderBy(s => s.Nazwisko).ThenBy(s => s.Imie)
+            .Select(s => $"{s.NumerIndeksu} | {s.Imie} {s.Nazwisko} ");
     }
 
     /// <summary>
@@ -59,8 +63,14 @@ public sealed class ZadaniaLinq
     /// WHERE Kategoria = 'Analytics';
     /// </summary>
     public IEnumerable<string> Zadanie04_PierwszyPrzedmiotAnalityczny()
-    {
-        throw Niezaimplementowano(nameof(Zadanie04_PierwszyPrzedmiotAnalityczny));
+    {//widze ze zadanie narzuca analitics w wyborze i wiem ze bedzie pozycja z danych ale zrobie z rozpatrzeniem nula
+        var przedmiot = DaneUczelni.Przedmioty.FirstOrDefault(p => p.Kategoria == "Analytics");
+        if (przedmiot == null)
+        {
+            return ["Brak przedmiotu z kategorii Analytics"];
+        }
+
+        return [$"{przedmiot.Nazwa} | start: {przedmiot.DataStartu:yy-MM-dd}"];
     }
 
     /// <summary>
