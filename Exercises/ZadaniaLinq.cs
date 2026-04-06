@@ -87,22 +87,25 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie05_CzyIstniejeNieaktywneZapisanie()
     {
-        throw Niezaimplementowano(nameof(Zadanie05_CzyIstniejeNieaktywneZapisanie));
+        var czyIstniej = DaneUczelni.Zapisy.Any(z => !z.CzyAktywny);
+        return [$"Czy istnieje chodz jednen niaktyny zapis: {czyIstniej}"];
     }
 
     /// <summary>
     /// Zadanie:
     /// Sprawdź, czy każdy prowadzący ma uzupełnioną nazwę katedry.
     /// Warto użyć metody, która weryfikuje warunek dla całej kolekcji.
-    ///
+    /// moj kom: w szablonie każdy ma, ale sprawdzić trza
     /// SQL:
     /// SELECT CASE WHEN COUNT(*) = COUNT(Katedra)
     /// THEN 1 ELSE 0 END
     /// FROM Prowadzacy;
     /// </summary>
     public IEnumerable<string> Zadanie06_CzyWszyscyProwadzacyMajaKatedre()
-    {
-        throw Niezaimplementowano(nameof(Zadanie06_CzyWszyscyProwadzacyMajaKatedre));
+    {//zamiast !null sprawdzamy też same spacje w katedrach
+        var czyWszyscyeMajaKatedre = DaneUczelni.Prowadzacy
+            .All(p => !string.IsNullOrWhiteSpace(p.Katedra));
+        return [$"Czy wszyscy prowadzacy maja katedre (All): {czyWszyscyeMajaKatedre}"];
     }
 
     /// <summary>
@@ -116,7 +119,8 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie07_LiczbaAktywnychZapisow()
     {
-        throw Niezaimplementowano(nameof(Zadanie07_LiczbaAktywnychZapisow));
+        var liczbaAktywnychZapisow = DaneUczelni.Zapisy.Count(z => z.CzyAktywny);
+        return [$"Liczba aktywnych zapisow: {liczbaAktywnychZapisow}"];
     }
 
     /// <summary>
@@ -130,7 +134,8 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie08_UnikalneMiastaStudentow()
     {
-        throw Niezaimplementowano(nameof(Zadanie08_UnikalneMiastaStudentow));
+        return DaneUczelni.Studenci.Select(s => s.Miasto).Distinct()
+            .OrderBy(miasto => miasto);
     }
 
     /// <summary>
