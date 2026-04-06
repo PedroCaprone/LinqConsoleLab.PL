@@ -14,6 +14,7 @@ Spłaszczanie danych za pomocą SelectMany,
 Grupowanie rekordów przy użyciu GroupBy,
 Podstawowe agregacje, takie jak Average i Max,
 
+## Przegląd opcji konsoli (zadania)
 Zadania 1–16 użycie Linq bazując na poleceniach sql
 Zadania 17-20 - wyzwania, łącza wiele umiejętności
 
